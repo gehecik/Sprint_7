@@ -18,7 +18,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 public class CreateCourierTest {
 
-    private static final String CREATE_COURIER_PATH = "/api/v1/courier";
     Random random = new Random();
     int randomNum = random.nextInt();
 
@@ -40,6 +39,11 @@ public class CreateCourierTest {
         verifyErrorMessage(response, "ok",true);
     }
 
+    void CreateCourierCode400Test(String courier) {
+        Response response = sendPostRequestCourier(courier);
+        checkStatusCode(response, 400);
+        verifyErrorMessage(response, "message","Недостаточно данных для создания учетной записи");
+    }
     //@ParameterizedTest
     //@ValueSource(strings = {
     //     "{ \"password\": \"1234\", \"firstName\": \"loginfirstname\" }",
@@ -52,9 +56,7 @@ public class CreateCourierTest {
         String courier = "{ \"password\": \"12313\"," +
                 "\"firstName\": \"loginfirstname\" }";
 
-        Response response = sendPostRequestCourier(courier);
-        checkStatusCode(response, 400);
-        verifyErrorMessage(response, "message","Недостаточно данных для создания учетной записи");
+        CreateCourierCode400Test(courier);
     }
 
     @Test
@@ -64,9 +66,7 @@ public class CreateCourierTest {
         String courier = "{ \"login\": \"loginname\"," +
                 "\"firstName\": \"loginfirstname\" }";
 
-        Response response = sendPostRequestCourier(courier);
-        checkStatusCode(response, 400);
-        verifyErrorMessage(response, "message","Недостаточно данных для создания учетной записи");
+        CreateCourierCode400Test(courier);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class CreateCourierTest {
         Response response = given()
                 .header("Content-type", "application/json")
                 .body(courier)
-                .post(CREATE_COURIER_PATH);
+                .post("/api/v1/courier");
         return response;
     }
 
