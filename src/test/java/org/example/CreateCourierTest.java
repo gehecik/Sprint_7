@@ -1,7 +1,9 @@
 package org.example;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
-import jdk.jfr.Description;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,49 +35,38 @@ public class CreateCourierTest {
                                            "1234",
                                            "firstname");
 
-        given()
-                .header("Content-type", "application/json")
-                .body(courier)
-                .when()
-                .post(CREATE_COURIER_PATH)
-                .then().statusCode(201)
-                .body("ok", equalTo(true));
+        Response response = sendPostRequestCourier(courier);
+        checkStatusCode(response, 201);
+        verifyErrorMessage(response, "ok",true);
     }
 
     //@ParameterizedTest
-    //@ValueSource(strings = {"{ \"password\": \"1234\", " +
-    //        "\"firstName\": \"loginfirstname\" }",
-    //        "{ \"login\": \"loginname\"," +
-    //        "\"firstName\": \"loginfirstname\" }"})
+    //@ValueSource(strings = {
+    //     "{ \"password\": \"1234\", \"firstName\": \"loginfirstname\" }",
+    //     "{ \"login\": \"loginname\", \"firstName\": \"loginfirstname\" }"
+    //     })
     @Test
     @DisplayName("Creating an account without a login")
     @Description("400: Creating an account without a login")
     void CreateCourierCode400WithoutLoginTest() {
-        String body = "{ \"password\": \"12313\"," +
+        String courier = "{ \"password\": \"12313\"," +
                 "\"firstName\": \"loginfirstname\" }";
 
-        given()
-                .header("Content-type", "application/json")
-                .body(body)
-                .when()
-                .post(CREATE_COURIER_PATH)
-                .then().statusCode(400)
-                .body("message", equalTo("Недостаточно данных для создания учетной записи"));
+        Response response = sendPostRequestCourier(courier);
+        checkStatusCode(response, 400);
+        verifyErrorMessage(response, "message","Недостаточно данных для создания учетной записи");
     }
 
     @Test
     @DisplayName("Creating an account without a password")
     @Description("400: Creating an account without a password")
     void CreateCourierCode400WithoutPasswordTest() {
-        String body = "{ \"login\": \"loginname\"," +
+        String courier = "{ \"login\": \"loginname\"," +
                 "\"firstName\": \"loginfirstname\" }";
-        given()
-                .header("Content-type", "application/json")
-                .body(body)
-                .when()
-                .post(CREATE_COURIER_PATH)
-                .then().statusCode(400)
-                .body("message", equalTo("Недостаточно данных для создания учетной записи"));
+
+        Response response = sendPostRequestCourier(courier);
+        checkStatusCode(response, 400);
+        verifyErrorMessage(response, "message","Недостаточно данных для создания учетной записи");
     }
 
     @Test
@@ -85,19 +76,34 @@ public class CreateCourierTest {
         Courier courier = new Courier(String.format("duplicateuser%d", randomNum),
                                            "1234",
                                            "firstname");
-        given()
-                .header("Content-type", "application/json")
-                .body(courier)
-                .post(CREATE_COURIER_PATH);
 
-        given()
-                .header("Content-type", "application/json")
-                .body(courier)
-                .when()
-                .post(CREATE_COURIER_PATH)
-                .then().statusCode(409)
-                .body("message", equalTo("Этот логин уже используется"));
+        sendPostRequestCourier(courier);
+
+        Response response = sendPostRequestCourier(courier);
+        checkStatusCode(response, 409);
+        verifyErrorMessage(response, "message","Этот логин уже используется");
+
         //Expected: Этот логин уже используется
         //  Actual: Этот логин уже используется. Попробуйте другой.
     }
+
+    @Step("Send POST request to /api/v1/courier Create a new courier")
+    public Response sendPostRequestCourier(Object courier) {
+        Response response = given()
+                .header("Content-type", "application/json")
+                .body(courier)
+                .post(CREATE_COURIER_PATH);
+        return response;
+    }
+
+    @Step("Check status code")
+    public void checkStatusCode(Response response, int statusCode) {
+        response.then().statusCode(statusCode);
+    }
+
+    @Step("Verify response")
+    public void verifyErrorMessage(Response response, String key, Object expectedValue) {
+        response.then().body(key, equalTo(expectedValue));
+    }
+
 }
