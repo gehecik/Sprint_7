@@ -1,21 +1,22 @@
 package org.example.courier;
 
 import io.qameta.allure.Description;
-import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.example.data.Courier;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
+import java.net.HttpURLConnection;
+
 import static org.example.utils.EnvConfig.BASE_URL;
-import static org.example.utils.EnvConfig.CREATE_COURIER;
-import static org.example.utils.RandomLogin.randomLogin;
-import static org.hamcrest.core.IsEqual.equalTo;
 
 public class CreateCourierTest {
+    private final CourierTest courierTest = new CourierTest();
+
+    int courierId;
 
     @BeforeEach
     public void setUp() {
@@ -25,81 +26,63 @@ public class CreateCourierTest {
     @Test
     @DisplayName("Successful account creation")
     @Description("201: Successful account creation")
-    void CreateCourierCode201Test() {
-        Courier courier = new Courier(randomLogin(),
-                                           "1234",
-                                           "firstname");
+    void CreateCourierSuccessfulTest() {
+        Courier courier = Courier.courierWithRandomLogin();
 
-        Response response = sendPostRequestCourier(courier, CREATE_COURIER);
-        checkStatusCode(response, 201);
-        verifyResponse(response, "ok", true);
+        Response response = courierTest.createCourier(courier);
+        courierTest.checkStatusCode(response, HttpURLConnection.HTTP_CREATED);
+        courierTest.verifyResponse(response, "ok", true);
+
+        Response loginResponse = courierTest.loginCourier(courier);
+        courierId = courierTest.getId(loginResponse);
     }
 
-    //@ParameterizedTest
-    //@ValueSource(strings = {
-    //     "{ \"password\": \"1234\", \"firstName\": \"loginfirstname\" }",
-    //     "{ \"login\": \"loginname\", \"firstName\": \"loginfirstname\" }"
-    //     })
+    void CreateCourierBadRequestTest(Object courier) {
+        Response response = courierTest.createCourier(courier);
+        courierTest.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
+        courierTest.verifyResponse(response, "message","Недостаточно данных для создания учетной записи");
+    }
+
     @Test
     @DisplayName("Creating an account without a login")
     @Description("400: Creating an account without a login")
-    void CreateCourierCode400WithoutLoginTest() {
-        String courier = "{ \"password\": \"12313\"," +
-                "\"firstName\": \"loginfirstname\" }";
+    void CreateCourierBadRequestWithoutLoginTest() {
+        Courier courier = Courier.courierWithoutLogin();
 
-        CreateCourierCode400Test(courier, CREATE_COURIER);
+        CreateCourierBadRequestTest(courier);
     }
 
     @Test
     @DisplayName("Creating an account without a password")
     @Description("400: Creating an account without a password")
-    void CreateCourierCode400WithoutPasswordTest() {
-        String courier = "{ \"login\": \"loginname\"," +
-                "\"firstName\": \"loginfirstname\" }";
+    void CreateCourierBadRequestWithoutPasswordTest() {
+        Courier courier = Courier.courierWithoutPassword();
 
-        CreateCourierCode400Test(courier, CREATE_COURIER);
+        CreateCourierBadRequestTest(courier);
     }
 
     @Test
     @DisplayName("Creating an account with a duplicate login")
     @Description("409: Creating an account with a duplicate login")
-    void CreateCourierCode409WithDuplicateLoginTest() {
-        Courier courier = new Courier(randomLogin(),
-                                           "1234",
-                                           "firstname");
+    void CreateCourierConflictWithDuplicateLoginTest() {
+        Courier courier = Courier.courierWithRandomLogin();
 
-        sendPostRequestCourier(courier, CREATE_COURIER);
+        courierTest.createCourierWithLog(courier);//.createCourier(courier);
+        Response loginResponse = courierTest.loginCourier(courier);
+        courierId = courierTest.getId(loginResponse);
 
-        Response response = sendPostRequestCourier(courier, CREATE_COURIER);
-        checkStatusCode(response, 409);
-        verifyResponse(response, "message","Этот логин уже используется");
-
+        Response responseDuplicate = courierTest.createCourierWithLog(courier);//.createCourier(courier);
+        courierTest.checkStatusCode(responseDuplicate, HttpURLConnection.HTTP_CONFLICT);
+        courierTest.verifyResponse(responseDuplicate, "message","Этот логин уже используется");
         //Expected: Этот логин уже используется
         //  Actual: Этот логин уже используется. Попробуйте другой.
     }
 
-    @Step("Send POST request to /api/v1/courier Create a new courier")
-    public Response sendPostRequestCourier(Object courier, String endpoint) {
-        Response response = given()
-                .header("Content-type", "application/json")
-                .body(courier)
-                .post(endpoint);
-        return response;
+    @AfterEach
+    public void tearDown() {
+        if (courierId != 0) {
+            courierTest.deleteById(courierId);
+        }
     }
 
-    @Step("Check status code")
-    public void checkStatusCode(Response response, int statusCode) {
-        response.then().statusCode(statusCode);
-    }
-
-    @Step("Verify response")
-    public void verifyResponse(Response response, String key, Object expectedValue) {
-        response.then().body(key, equalTo(expectedValue));
-    }
-
-    void CreateCourierCode400Test(Object courier, String endpoint) {
-        Response response = sendPostRequestCourier(courier, endpoint);
-        checkStatusCode(response, 400);
-        verifyResponse(response, "message","Недостаточно данных для создания учетной записи");
-    }
 }
