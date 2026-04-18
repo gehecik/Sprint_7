@@ -56,8 +56,17 @@ public class CourierTest extends BaseTest {
     }
 
     @Step("Delete courier")
-    public void deleteById(int id) {
-        given().delete(BASE_PATH + "/courier/" + id);
+    public Response deleteById(Object id) {
+        return given()
+                .delete(BASE_PATH + "/courier/{id}", id)
+                .then()
+                .extract()
+                .response();
+    }
+
+    @Step("Delete courier")
+    public Response deleteWithoutId() {
+        return deleteById("null");
     }
 
 
