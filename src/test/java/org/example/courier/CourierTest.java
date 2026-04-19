@@ -69,6 +69,4 @@ public class CourierTest extends BaseTest {
         return deleteById("null");
     }
 
-
-
 }

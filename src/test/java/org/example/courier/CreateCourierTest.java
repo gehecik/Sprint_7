@@ -67,15 +67,13 @@ public class CreateCourierTest {
     void CreateCourierConflictWithDuplicateLoginTest() {
         Courier courier = Courier.courierWithRandomLogin();
 
-        courierTest.createCourierWithLog(courier);//.createCourier(courier);
+        courierTest.createCourier(courier);
         Response loginResponse = courierTest.loginCourier(courier);
         courierId = courierTest.getId(loginResponse);
 
-        Response responseDuplicate = courierTest.createCourierWithLog(courier);//.createCourier(courier);
+        Response responseDuplicate = courierTest.createCourier(courier);
         courierTest.checkStatusCode(responseDuplicate, HttpURLConnection.HTTP_CONFLICT);
         courierTest.verifyResponse(responseDuplicate, "message","Этот логин уже используется");
-        //Expected: Этот логин уже используется
-        //  Actual: Этот логин уже используется. Попробуйте другой.
     }
 
     @AfterEach

@@ -56,9 +56,6 @@ public class LoginCourierTest {
         Courier courierWithoutPassword = Courier.currentCourierWithoutPassword(courier);
 
         CheckLoginCourierBadRequestTest(courierWithoutPassword);
-        //Expected status code <400> but was <504>.
-        //400 Bad Request "Недостаточно данных для входа"
-        //504 Gateway Timeout
     }
 
     public void CheckLoginNotFound(Object courier) {

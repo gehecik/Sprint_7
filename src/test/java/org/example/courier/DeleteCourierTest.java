@@ -44,8 +44,6 @@ public class DeleteCourierTest {
         Response response = courierTest.deleteById(courierId);
         courierTest.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
         courierTest.verifyResponse(response, "message","Курьера с таким id нет");
-//        Expected: Курьера с таким id нет
-//        Actual: Курьера с таким id нет.
     }
 
     @Test
