@@ -1,10 +1,12 @@
 package org.example.order;
 
+import com.google.gson.Gson;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.example.BaseTest;
 
+import java.util.List;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
@@ -34,9 +36,56 @@ public class OrderTest extends BaseTest {
                 .get(BASE_PATH + "/orders");
     }
 
-//    @Step("Parameter for the request")
-//    public void parameterForOrders(String name, Object value) {
-//        given()
-//
-//    }
+
+    public String getListWithParams(List<String> params) {
+        Gson gson = new Gson();
+        List<String> stations = params;
+        return gson.toJson(stations);
+    }
+
+    @Step("Get orders list")
+    public String getListWithStations() {
+        return getListWithParams(List.of("1", "2"));
+    }
+
+    @Step("Get orders list")
+    public String getListWithStation() {
+        return getListWithParams(List.of("110"));
+    }
+
+    public int getDefaultLimit() {
+        return 30;
+    }
+
+    public int getDefaultPage() {
+        return 0;
+    }
+
+    @Step("Put order with params")
+    public Response putOrder(Object id, Map<String, Object> parameters) {
+        return given()
+                .queryParams(parameters)
+                .put(BASE_PATH + "/orders/accept/{id}", id);
+    }
+
+    @Step("Put order without id and with params")
+    public Response putOrderWithoutId(Map<String, Object> parameters) {
+        return given()
+                .queryParams(parameters)
+                .put(BASE_PATH + "/orders/accept/");
+    }
+
+    @Step("Get order by track")
+    public Response getOrderByTrack(int track) {
+        return given()
+                .queryParam("t", track)
+                .get(BASE_PATH + "/orders/track")
+                .then()
+                .extract()
+                .response();
+    }
+
+    public int getOrderId(Response response) {
+        return getValue(response,"order.id");
+    }
 }

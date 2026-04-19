@@ -1,6 +1,5 @@
 package org.example.order;
 
-import com.google.gson.Gson;
 import io.qameta.allure.Description;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import java.net.HttpURLConnection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.example.utils.EnvConfig.BASE_URL;
@@ -70,9 +68,7 @@ public class ListOrdersTest {
 
         Response loginResponse = courierTest.loginCourier(courier);
         courierId = courierTest.verifyResponseId(loginResponse);
-        Gson gson = new Gson();
-        List<String> stations = List.of("1", "2");
-        String nearestStation = gson.toJson(stations);
+        String nearestStation = orderTest.getListWithStations();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("courierId", courierId);
@@ -89,12 +85,9 @@ public class ListOrdersTest {
     @DisplayName("Get list of orders with limit")
     @Description("200: Get list of orders with limit")
     public void getOrdersListWithLimitTest() {
-        int defaultLimit = 30;
-        int defaultPage = 0;
-
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("limit", defaultLimit);
-        parameters.put("page", defaultPage);
+        parameters.put("limit", orderTest.getDefaultLimit());
+        parameters.put("page", orderTest.getDefaultPage());
 
         Response response = orderTest.getOrders(parameters);
         orderTest.checkStatusCode(response, HttpURLConnection.HTTP_OK);
@@ -106,13 +99,11 @@ public class ListOrdersTest {
     @DisplayName("Get list of orders with limit and station")
     @Description("200: Get list of orders with limit and station Калужская")
     public void getOrdersListWithLimitAndStationTest() {
-        int defaultLimit = 30;
-        int defaultPage = 0;
-        String nearestStation = new Gson().toJson(List.of("110"));
+        String nearestStation = orderTest.getListWithStation();
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("limit", defaultLimit);
-        parameters.put("page", defaultPage);
+        parameters.put("limit", orderTest.getDefaultLimit());
+        parameters.put("page", orderTest.getDefaultPage());
         parameters.put("nearestStation", nearestStation);
 
         Response response = orderTest.getOrders(parameters);

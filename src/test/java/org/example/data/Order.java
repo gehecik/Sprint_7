@@ -1,7 +1,5 @@
 package org.example.data;
 
-import java.util.List;
-
 public class Order {
     private String firstName;
     private String lastName;
@@ -125,6 +123,30 @@ public class Order {
 
     public void setColor(String[] color) {
         this.color = color;
+    }
+
+    public static Order getOrder(String[] color) {
+        return new Order("firstName",
+                "lastName",
+                "Konoha, 142 apt.",
+                "4",
+                "+7 800 355 35 35",
+                5,
+                "2020-06-06",
+                "Saske, come back to Konoha",
+                color);
+    }
+
+    public static Order getOrderWithColor() {
+        return new Order("firstName",
+                "lastName",
+                "Konoha, 142 apt.",
+                "4",
+                "+7 800 355 35 35",
+                5,
+                "2020-06-06",
+                "Saske, come back to Konoha",
+                new String[]{"BLACK"});
     }
 
 }
