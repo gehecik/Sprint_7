@@ -7,6 +7,8 @@ import org.hamcrest.Matcher;
 import java.util.List;
 
 import static java.util.Optional.empty;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -23,6 +25,16 @@ public class BaseTest {
     @Step("Verify response")
     public void verifyResponse(Response response, String key, Object expectedValue) {
         response.then().body(key, equalTo(expectedValue));
+    }
+
+    @Step("Verify part of response")
+    public void verifyPartOfResponse(Response response, String key, String expectedValue) {
+        response.then().body(key, containsString(expectedValue));
+    }
+
+    @Step("Verify part of response")
+    public void verifyHasItemResponse(Response response, String key, String expectedValue) {
+        response.then().body(key, hasItem(expectedValue));
     }
 
     @Step("Verify response")

@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.example.utils.EnvConfig.BASE_URL;
-import static org.example.utils.RandomValue.randomId;
+import static org.example.utils.RandomValue.randomNumber;
 
 public class ListOrdersTest {
     private final OrderTest orderTest = new OrderTest();
@@ -116,7 +116,7 @@ public class ListOrdersTest {
     @DisplayName("Get list of orders with non-existent id")
     @Description("404: Get list of orders with non-existent id")
     public void getOrdersListNotFoundIdTest() {
-        int randCourierId = randomId();
+        int randCourierId = randomNumber();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("courierId", randCourierId);
 

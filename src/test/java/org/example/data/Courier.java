@@ -1,7 +1,7 @@
 package org.example.data;
 
-import static org.example.utils.RandomValue.randomLogin;
-import static org.example.utils.RandomValue.randomPassword;
+import static org.example.utils.RandomValue.randomNameWithDigit;
+import static org.example.utils.RandomValue.randomNumberAsString;
 
 public class Courier {
 
@@ -19,19 +19,19 @@ public class Courier {
     }
 
     public static Courier courierWithRandomLogin() {
-        return new Courier(randomLogin(),
-                randomPassword(),
+        return new Courier(randomNameWithDigit(),
+                randomNumberAsString(),
                 "firstname");
     }
 
     public static Courier courierWithoutLogin() {
         return new Courier(null,
-                randomPassword(),
+                randomNumberAsString(),
                 "firstname");
     }
 
     public static Courier courierWithoutPassword() {
-        return new Courier(randomLogin(),
+        return new Courier(randomNameWithDigit(),
                 null,
                 "firstname");
     }
@@ -43,7 +43,7 @@ public class Courier {
     }
 
     public static Courier courierWrongLogin(Courier courier) {
-        return new Courier(randomLogin(),
+        return new Courier(randomNameWithDigit(),
                 courier.getPassword(),
                 courier.getFirstName());
     }

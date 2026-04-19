@@ -5,11 +5,13 @@ import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.example.BaseTest;
+import org.example.data.Order;
 
 import java.util.List;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class OrderTest extends BaseTest {
 
@@ -85,7 +87,29 @@ public class OrderTest extends BaseTest {
                 .response();
     }
 
+    @Step("Get order without track")
+    public Response getOrderWithoutTrack() {
+        return given()
+                .get(BASE_PATH + "/orders/track")
+                .then()
+                .extract()
+                .response();
+    }
+
     public int getOrderId(Response response) {
         return getValue(response,"order.id");
+    }
+
+
+    public void verifyResponseOrder(Response response, String key, Order expectedValue) {
+        verifyResponse(response, key + ".firstName", expectedValue.getFirstName());
+        verifyResponse(response, key + ".lastName", expectedValue.getLastName());
+        verifyResponse(response, key + ".address", expectedValue.getAddress());
+        verifyResponse(response, key + ".metroStation", expectedValue.getMetroStation());
+        verifyResponse(response, key + ".phone", expectedValue.getPhone());
+        verifyResponse(response, key + ".rentTime", expectedValue.getRentTime());
+        verifyPartOfResponse(response, key + ".deliveryDate", expectedValue.getDeliveryDate());
+        verifyResponse(response, key + ".comment", expectedValue.getComment());
+        verifyHasItemResponse(response, key + ".color", expectedValue.getColor()[0]);
     }
 }

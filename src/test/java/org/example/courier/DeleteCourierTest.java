@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.net.HttpURLConnection;
 
 import static org.example.utils.EnvConfig.BASE_URL;
-import static org.example.utils.RandomValue.randomId;
+import static org.example.utils.RandomValue.randomNumber;
 
 public class DeleteCourierTest {
     private final CourierTest courierTest = new CourierTest();
@@ -40,7 +40,7 @@ public class DeleteCourierTest {
     @DisplayName("Delete courier with non-exist id")
     @Description("404: Delete courier with non-exist id")
     public void deleteCourierNotFoundWithNonExistIdTest() {
-        courierId = randomId();
+        courierId = randomNumber();
         Response response = courierTest.deleteById(courierId);
         courierTest.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
         courierTest.verifyResponse(response, "message","Курьера с таким id нет");

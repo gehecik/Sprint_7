@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.example.utils.EnvConfig.BASE_URL;
-import static org.example.utils.RandomValue.randomId;
+import static org.example.utils.RandomValue.randomNumber;
 
 public class AcceptOrderTest {
     private final OrderTest orderTest = new OrderTest();
@@ -87,7 +87,7 @@ public class AcceptOrderTest {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("courierId", courierId);
 
-        int wrongId = randomId();
+        int wrongId = randomNumber();
 
         Response response = orderTest.putOrder(wrongId, parameters);
 
@@ -100,7 +100,7 @@ public class AcceptOrderTest {
     @DisplayName("Accept order with non-exist courier's id")
     @Description("404: Accept order with non-exist courier's id")
     void acceptOrderNotFoundNotExistCourierTest() {
-        int wrongCourierId = randomId();
+        int wrongCourierId = randomNumber();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("courierId", wrongCourierId);
