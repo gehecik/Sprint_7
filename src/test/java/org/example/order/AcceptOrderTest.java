@@ -1,13 +1,14 @@
 package org.example.order;
 
 import io.qameta.allure.Description;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.example.courier.CourierTest;
+import org.example.BaseTest;
+import org.example.steps.BaseSteps;
+import org.example.steps.CourierSteps;
 import org.example.data.Courier;
 import org.example.data.Order;
+import org.example.steps.OrderSteps;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,21 +16,17 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.example.utils.EnvConfig.BASE_URL;
 import static org.example.utils.RandomValue.randomNumber;
 
-public class AcceptOrderTest {
-    private final OrderTest orderTest = new OrderTest();
-    private final CourierTest courierTest = new CourierTest();
+public class AcceptOrderTest extends BaseTest {
+    private final OrderSteps orderTest = new OrderSteps();
+    private final CourierSteps courierTest = new CourierSteps();
+
     Courier courier;
     int courierId;
     int id;
     int track;
 
-    @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = BASE_URL;
-    }
 
     @Test
     @DisplayName("Successfully accepted order")
@@ -38,7 +35,7 @@ public class AcceptOrderTest {
         courier = Courier.courierWithRandomLogin();
         courierTest.createCourier(courier);
         Response loginResponse = courierTest.loginCourier(courier);
-        courierId = courierTest.verifyResponseId(loginResponse);
+        courierId = BaseSteps.verifyResponseId(loginResponse);
 
         Order order = Order.getOrderWithColor();
         Response orderResponse = orderTest.createOrder(order);
@@ -52,8 +49,8 @@ public class AcceptOrderTest {
 
         Response response = orderTest.putOrder(id, parameters);
 
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_OK);
-        orderTest.verifyResponse(response, "ok", true);
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_OK);
+        BaseSteps.verifyResponse(response, "ok", true);
     }
 
 
@@ -64,15 +61,15 @@ public class AcceptOrderTest {
         courier = Courier.courierWithRandomLogin();
         courierTest.createCourier(courier);
         Response loginResponse = courierTest.loginCourier(courier);
-        courierId = courierTest.verifyResponseId(loginResponse);
+        courierId = BaseSteps.verifyResponseId(loginResponse);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("courierId", courierId);
 
         Response response = orderTest.putOrderWithoutId(parameters);
 
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
-        orderTest.verifyResponse(response, "message", "Недостаточно данных для поиска");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
+        BaseSteps.verifyResponse(response, "message", "Недостаточно данных для поиска");
     }
 
     @Test
@@ -82,7 +79,7 @@ public class AcceptOrderTest {
         courier = Courier.courierWithRandomLogin();
         courierTest.createCourier(courier);
         Response loginResponse = courierTest.loginCourier(courier);
-        courierId = courierTest.verifyResponseId(loginResponse);
+        courierId = BaseSteps.verifyResponseId(loginResponse);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("courierId", courierId);
@@ -91,8 +88,8 @@ public class AcceptOrderTest {
 
         Response response = orderTest.putOrder(wrongId, parameters);
 
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
-        orderTest.verifyResponse(response, "message", "Заказа с таким id не существует");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
+        BaseSteps.verifyResponse(response, "message", "Заказа с таким id не существует");
     }
 
 
@@ -114,8 +111,8 @@ public class AcceptOrderTest {
 
         Response response = orderTest.putOrder(id, parameters);
 
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
-        orderTest.verifyResponse(response, "message", "Курьера с таким id не существует");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
+        BaseSteps.verifyResponse(response, "message", "Курьера с таким id не существует");
     }
 
     @Test
@@ -133,8 +130,8 @@ public class AcceptOrderTest {
 
         Response response = orderTest.putOrder(id, parameters);
 
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
-        orderTest.verifyResponse(response, "message", "Недостаточно данных для поиска");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
+        BaseSteps.verifyResponse(response, "message", "Недостаточно данных для поиска");
     }
 
 
@@ -152,7 +149,7 @@ public class AcceptOrderTest {
         courier = Courier.courierWithRandomLogin();
         courierTest.createCourier(courier);
         Response loginResponse = courierTest.loginCourier(courier);
-        courierId = courierTest.verifyResponseId(loginResponse);
+        courierId = BaseSteps.verifyResponseId(loginResponse);
 
         Order order = Order.getOrderWithColor();
         Response orderResponse = orderTest.createOrder(order);
@@ -166,12 +163,12 @@ public class AcceptOrderTest {
 
         Response response = orderTest.putOrder(id, parameters);
 
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_OK);
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_OK);
 
         Response responseDuplicate = orderTest.putOrder(id, parameters);
 
-        orderTest.checkStatusCode(responseDuplicate, HttpURLConnection.HTTP_CONFLICT);
-        orderTest.verifyResponse(response, "message", "Недостаточно данных для поиска");
+        BaseSteps.checkStatusCode(responseDuplicate, HttpURLConnection.HTTP_CONFLICT);
+        BaseSteps.verifyResponse(response, "message", "Недостаточно данных для поиска");
     }
 
     @AfterEach

@@ -1,87 +1,70 @@
 package org.example.data;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import static org.example.utils.RandomValue.randomNameWithDigit;
 import static org.example.utils.RandomValue.randomNumberAsString;
 
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Courier {
-
     private String login;
     private String password;
     private String firstName;
 
-    public Courier(String login, String password, String firstName) {
-        this.login = login;
-        this.password = password;
-        this.firstName = firstName;
-    }
-
-    public Courier() {
-    }
-
     public static Courier courierWithRandomLogin() {
-        return new Courier(randomNameWithDigit(),
-                randomNumberAsString(),
-                "firstname");
+        return Courier.builder()
+                .login(randomNameWithDigit())
+                .password(randomNumberAsString())
+                .firstName("firstname")
+                .build();
     }
 
     public static Courier courierWithoutLogin() {
-        return new Courier(null,
-                randomNumberAsString(),
-                "firstname");
+        return Courier.builder()
+                .password(randomNumberAsString())
+                .firstName("firstname")
+                .build();
     }
 
     public static Courier courierWithoutPassword() {
-        return new Courier(randomNameWithDigit(),
-                null,
-                "firstname");
+        return Courier.builder()
+                .login(randomNameWithDigit())
+                .firstName("firstname")
+                .build();
     }
 
     public static Courier courierWrongPassword(Courier courier) {
-        return new Courier(courier.getLogin(),
-                "wrongPassword",
-                courier.getFirstName());
+        return Courier.builder()
+                .login(courier.getLogin())
+                .password("wrongPassword")
+                .firstName(courier.getFirstName())
+                .build();
     }
 
     public static Courier courierWrongLogin(Courier courier) {
-        return new Courier(randomNameWithDigit(),
-                courier.getPassword(),
-                courier.getFirstName());
+        return Courier.builder()
+                .login(randomNameWithDigit())
+                .password(courier.getPassword())
+                .firstName(courier.getFirstName())
+                .build();
     }
 
     public static Courier currentCourierWithoutLogin(Courier courier) {
-        return new Courier(null,
-                courier.getPassword(),
-                null);
+        return Courier.builder()
+                .password(courier.getPassword())
+                .build();
     }
 
     public static Courier currentCourierWithoutPassword(Courier courier) {
-        return new Courier(courier.getLogin(),
-                null,
-                null);
+        return Courier.builder()
+                .login(courier.getLogin())
+                .build();
     }
 
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
 }

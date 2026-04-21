@@ -1,29 +1,29 @@
 package org.example.courier;
 
 import io.qameta.allure.Description;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.example.BaseTest;
+import org.example.steps.BaseSteps;
 import org.example.data.Courier;
+import org.example.steps.CourierSteps;
 import org.junit.jupiter.api.*;
 
 import java.net.HttpURLConnection;
 
-import static org.example.utils.EnvConfig.*;
+public class LoginCourierTest extends BaseTest {
+    private final CourierSteps courierTest = new CourierSteps();
 
-public class LoginCourierTest {
-    private final CourierTest courierTest = new CourierTest();
     Courier courier;
 
     int courierId;
 
     @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = BASE_URL;
+    public void setUpLoginCourier() {
         courier = Courier.courierWithRandomLogin();
         courierTest.createCourier(courier);
 
         Response loginResponse = courierTest.loginCourier(courier);
-        courierId = courierTest.verifyResponseId(loginResponse);
+        courierId = BaseSteps.verifyResponseId(loginResponse);
     }
 
     @Test
@@ -31,13 +31,13 @@ public class LoginCourierTest {
     @Description("200: Successful login to an account")
     public void CheckLoginCourierSuccessfulTest() {
         Response response = courierTest.loginCourier(courier);
-        courierTest.checkStatusCode(response, HttpURLConnection.HTTP_OK);
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_OK);
     }
 
     public void CheckLoginCourierBadRequestTest(Object courier) {
         Response response = courierTest.loginCourierWithLog(courier);//.loginCourier(courier);
-        courierTest.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
-        courierTest.verifyResponse(response, "message","Недостаточно данных для входа");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
+        BaseSteps.verifyResponse(response, "message","Недостаточно данных для входа");
     }
 
     @Test
@@ -60,8 +60,8 @@ public class LoginCourierTest {
 
     public void CheckLoginNotFound(Object courier) {
         Response response = courierTest.loginCourier(courier);
-        courierTest.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
-        courierTest.verifyResponse(response, "message","Учетная запись не найдена");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
+        BaseSteps.verifyResponse(response, "message","Учетная запись не найдена");
     }
 
     @Test

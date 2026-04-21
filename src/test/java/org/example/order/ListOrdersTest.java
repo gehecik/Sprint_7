@@ -1,12 +1,13 @@
 package org.example.order;
 
 import io.qameta.allure.Description;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.example.courier.CourierTest;
+import org.example.BaseTest;
+import org.example.steps.BaseSteps;
+import org.example.steps.CourierSteps;
 import org.example.data.Courier;
+import org.example.steps.OrderSteps;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,19 +15,14 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.example.utils.EnvConfig.BASE_URL;
 import static org.example.utils.RandomValue.randomNumber;
 
-public class ListOrdersTest {
-    private final OrderTest orderTest = new OrderTest();
-    private final CourierTest courierTest = new CourierTest();
+public class ListOrdersTest extends BaseTest {
+    private final OrderSteps orderTest = new OrderSteps();
+    private final CourierSteps courierTest = new CourierSteps();
+
     Courier courier;
     int courierId;
-
-    @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = BASE_URL;
-    }
 
     @Test
     @DisplayName("Get list of orders")
@@ -35,9 +31,9 @@ public class ListOrdersTest {
         Map<String, Object> parameters = new HashMap<>();
         Response response = orderTest.getOrders(parameters);
 
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_OK);
-        orderTest.checkIsNotEmpty(response, "orders");
-        orderTest.checkIsList(response, "orders");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_OK);
+        BaseSteps.checkIsNotEmpty(response, "orders");
+        BaseSteps.checkIsList(response, "orders");
     }
 
     @Test
@@ -48,15 +44,15 @@ public class ListOrdersTest {
         courierTest.createCourier(courier);
 
         Response loginResponse = courierTest.loginCourier(courier);
-        courierId = courierTest.verifyResponseId(loginResponse);
+        courierId = BaseSteps.verifyResponseId(loginResponse);
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("courierId", courierId);
 
         Response response = orderTest.getOrders(parameters);
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_OK);
-        orderTest.checkIsNotEmpty(response, "orders");
-        orderTest.checkIsList(response, "orders");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_OK);
+        BaseSteps.checkIsNotEmpty(response, "orders");
+        BaseSteps.checkIsList(response, "orders");
     }
 
     @Test
@@ -67,7 +63,7 @@ public class ListOrdersTest {
         courierTest.createCourier(courier);
 
         Response loginResponse = courierTest.loginCourier(courier);
-        courierId = courierTest.verifyResponseId(loginResponse);
+        courierId = BaseSteps.verifyResponseId(loginResponse);
         String nearestStation = orderTest.getListWithStations();
 
         Map<String, Object> parameters = new HashMap<>();
@@ -75,9 +71,9 @@ public class ListOrdersTest {
         parameters.put("nearestStation", nearestStation);
 
         Response response = orderTest.getOrders(parameters);
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_OK);
-        orderTest.checkIsNotEmpty(response, "orders");
-        orderTest.checkIsList(response, "orders");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_OK);
+        BaseSteps.checkIsNotEmpty(response, "orders");
+        BaseSteps.checkIsList(response, "orders");
     }
 
 
@@ -90,9 +86,9 @@ public class ListOrdersTest {
         parameters.put("page", orderTest.getDefaultPage());
 
         Response response = orderTest.getOrders(parameters);
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_OK);
-        orderTest.checkIsNotEmpty(response, "orders");
-        orderTest.checkIsList(response, "orders");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_OK);
+        BaseSteps.checkIsNotEmpty(response, "orders");
+        BaseSteps.checkIsList(response, "orders");
     }
 
     @Test
@@ -107,9 +103,9 @@ public class ListOrdersTest {
         parameters.put("nearestStation", nearestStation);
 
         Response response = orderTest.getOrders(parameters);
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_OK);
-        orderTest.checkIsNotEmpty(response, "orders");
-        orderTest.checkIsList(response, "orders");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_OK);
+        BaseSteps.checkIsNotEmpty(response, "orders");
+        BaseSteps.checkIsList(response, "orders");
     }
 
     @Test
@@ -121,8 +117,8 @@ public class ListOrdersTest {
         parameters.put("courierId", randCourierId);
 
         Response response = orderTest.getOrders(parameters);
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
-        orderTest.verifyResponse(response, "message","Курьер с идентификатором " + randCourierId + " не найден");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
+        BaseSteps.verifyResponse(response, "message","Курьер с идентификатором " + randCourierId + " не найден");
     }
 
 

@@ -1,27 +1,22 @@
 package org.example.courier;
 
 import io.qameta.allure.Description;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.example.BaseTest;
+import org.example.steps.BaseSteps;
 import org.example.data.Courier;
-import org.junit.jupiter.api.BeforeEach;
+import org.example.steps.CourierSteps;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.net.HttpURLConnection;
 
-import static org.example.utils.EnvConfig.BASE_URL;
 import static org.example.utils.RandomValue.randomNumber;
 
-public class DeleteCourierTest {
-    private final CourierTest courierTest = new CourierTest();
+public class DeleteCourierTest extends BaseTest {
+    private final CourierSteps courierTest = new CourierSteps();
     Courier courier;
     int courierId;
-
-    @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = BASE_URL;
-    }
 
     @Test
     @DisplayName("Successful delete courier")
@@ -31,9 +26,9 @@ public class DeleteCourierTest {
         courierTest.createCourier(courier);
 
         Response responselogin = courierTest.loginCourier(courier);
-        courierId = courierTest.verifyResponseId(responselogin);
+        courierId = BaseSteps.verifyResponseId(responselogin);
         Response response = courierTest.deleteById(courierId);
-        courierTest.checkStatusCode(response, HttpURLConnection.HTTP_OK);
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_OK);
     }
 
     @Test
@@ -42,8 +37,8 @@ public class DeleteCourierTest {
     public void deleteCourierNotFoundWithNonExistIdTest() {
         courierId = randomNumber();
         Response response = courierTest.deleteById(courierId);
-        courierTest.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
-        courierTest.verifyResponse(response, "message","Курьера с таким id нет");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
+        BaseSteps.verifyResponse(response, "message","Курьера с таким id нет");
     }
 
     @Test
@@ -51,8 +46,8 @@ public class DeleteCourierTest {
     @Description("400: Delete courier without id")
     public void deleteCourierBadRequestWithoutIdTest() {
         Response response = courierTest.deleteWithoutId();
-        courierTest.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
-        courierTest.verifyResponse(response, "message","Недостаточно данных для удаления курьера");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
+        BaseSteps.verifyResponse(response, "message","Недостаточно данных для удаления курьера");
     }
 
 }

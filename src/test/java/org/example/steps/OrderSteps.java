@@ -1,18 +1,18 @@
-package org.example.order;
+package org.example.steps;
 
 import com.google.gson.Gson;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.example.BaseTest;
 import org.example.data.Order;
 
 import java.util.List;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
+import static org.example.steps.BaseSteps.BASE_PATH;
 
-public class OrderTest extends BaseTest {
+public class OrderSteps {
 
     @Step("Create order")
     public Response createOrder(Object element) {
@@ -96,19 +96,24 @@ public class OrderTest extends BaseTest {
     }
 
     public int getOrderId(Response response) {
-        return getValue(response,"order.id");
+        return BaseSteps.getValue(response,"order.id");
     }
 
 
     public void verifyResponseOrder(Response response, String key, Order expectedValue) {
-        verifyResponse(response, key + ".firstName", expectedValue.getFirstName());
-        verifyResponse(response, key + ".lastName", expectedValue.getLastName());
-        verifyResponse(response, key + ".address", expectedValue.getAddress());
-        verifyResponse(response, key + ".metroStation", expectedValue.getMetroStation());
-        verifyResponse(response, key + ".phone", expectedValue.getPhone());
-        verifyResponse(response, key + ".rentTime", expectedValue.getRentTime());
-        verifyPartOfResponse(response, key + ".deliveryDate", expectedValue.getDeliveryDate());
-        verifyResponse(response, key + ".comment", expectedValue.getComment());
-        verifyHasItemResponse(response, key + ".color", expectedValue.getColor()[0]);
+        BaseSteps.verifyResponse(response, key + ".firstName", expectedValue.getFirstName());
+        BaseSteps.verifyResponse(response, key + ".lastName", expectedValue.getLastName());
+        BaseSteps.verifyResponse(response, key + ".address", expectedValue.getAddress());
+        BaseSteps.verifyResponse(response, key + ".metroStation", expectedValue.getMetroStation());
+        BaseSteps.verifyResponse(response, key + ".phone", expectedValue.getPhone());
+        BaseSteps.verifyResponse(response, key + ".rentTime", expectedValue.getRentTime());
+        BaseSteps.verifyPartOfResponse(response, key + ".deliveryDate", expectedValue.getDeliveryDate());
+        BaseSteps.verifyResponse(response, key + ".comment", expectedValue.getComment());
+        BaseSteps.verifyHasItemResponse(response, key + ".color", expectedValue.getColor()[0]);
     }
+
+    public int getTrack(Response response) {
+        return BaseSteps.getValue(response,"track");
+    }
+
 }

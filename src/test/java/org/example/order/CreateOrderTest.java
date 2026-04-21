@@ -1,11 +1,12 @@
 package org.example.order;
 
 import io.qameta.allure.Description;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.example.BaseTest;
+import org.example.steps.BaseSteps;
 import org.example.data.Order;
+import org.example.steps.OrderSteps;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,17 +16,10 @@ import org.junit.jupiter.params.provider.NullSource;
 import java.net.HttpURLConnection;
 import java.util.stream.Stream;
 
-import static org.example.utils.EnvConfig.*;
-
-public class CreateOrderTest {
-    private final OrderTest orderTest = new OrderTest();
+public class CreateOrderTest extends BaseTest {
+    private final OrderSteps orderTest = new OrderSteps();
 
     int track;
-
-    @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = BASE_URL;
-    }
 
     @ParameterizedTest
     @NullSource
@@ -36,9 +30,9 @@ public class CreateOrderTest {
         Order order = Order.getOrder(color);
 
         Response response = orderTest.createOrder(order);
-        orderTest.checkStatusCode(response, HttpURLConnection.HTTP_CREATED);
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_CREATED);
         track = orderTest.getTrack(response);
-        orderTest.verifyResponse(response, "track", track);
+        BaseSteps.verifyResponse(response, "track", track);
     }
 
     private static Stream<Arguments> colorData() {

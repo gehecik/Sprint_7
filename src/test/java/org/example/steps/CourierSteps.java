@@ -1,13 +1,13 @@
-package org.example.courier;
+package org.example.steps;
 
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.example.BaseTest;
 
 import static io.restassured.RestAssured.given;
+import static org.example.steps.BaseSteps.BASE_PATH;
 
-public class CourierTest extends BaseTest {
+public class CourierSteps {
 
     @Step("Create courier")
     public Response createCourier(Object courier) {

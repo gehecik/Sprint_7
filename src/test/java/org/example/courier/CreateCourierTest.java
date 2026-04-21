@@ -1,27 +1,21 @@
 package org.example.courier;
 
 import io.qameta.allure.Description;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.example.steps.BaseSteps;
+import org.example.BaseTest;
 import org.example.data.Courier;
+import org.example.steps.CourierSteps;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.net.HttpURLConnection;
 
-import static org.example.utils.EnvConfig.BASE_URL;
-
-public class CreateCourierTest {
-    private final CourierTest courierTest = new CourierTest();
+public class CreateCourierTest extends BaseTest {
+    private final CourierSteps courierTest = new CourierSteps();
 
     int courierId;
-
-    @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = BASE_URL;
-    }
 
     @Test
     @DisplayName("Successful account creation")
@@ -30,17 +24,17 @@ public class CreateCourierTest {
         Courier courier = Courier.courierWithRandomLogin();
 
         Response response = courierTest.createCourier(courier);
-        courierTest.checkStatusCode(response, HttpURLConnection.HTTP_CREATED);
-        courierTest.verifyResponse(response, "ok", true);
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_CREATED);
+        BaseSteps.verifyResponse(response, "ok", true);
 
         Response loginResponse = courierTest.loginCourier(courier);
-        courierId = courierTest.getId(loginResponse);
+        courierId = BaseSteps.getId(loginResponse);
     }
 
     void CreateCourierBadRequestTest(Object courier) {
         Response response = courierTest.createCourier(courier);
-        courierTest.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
-        courierTest.verifyResponse(response, "message","Недостаточно данных для создания учетной записи");
+        BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
+        BaseSteps.verifyResponse(response, "message","Недостаточно данных для создания учетной записи");
     }
 
     @Test
@@ -69,11 +63,11 @@ public class CreateCourierTest {
 
         courierTest.createCourier(courier);
         Response loginResponse = courierTest.loginCourier(courier);
-        courierId = courierTest.getId(loginResponse);
+        courierId = BaseSteps.getId(loginResponse);
 
         Response responseDuplicate = courierTest.createCourier(courier);
-        courierTest.checkStatusCode(responseDuplicate, HttpURLConnection.HTTP_CONFLICT);
-        courierTest.verifyResponse(responseDuplicate, "message","Этот логин уже используется");
+        BaseSteps.checkStatusCode(responseDuplicate, HttpURLConnection.HTTP_CONFLICT);
+        BaseSteps.verifyResponse(responseDuplicate, "message","Этот логин уже используется");
     }
 
     @AfterEach
