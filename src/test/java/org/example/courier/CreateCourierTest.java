@@ -20,7 +20,7 @@ public class CreateCourierTest extends BaseTest {
     @Test
     @DisplayName("Successful account creation")
     @Description("201: Successful account creation")
-    void CreateCourierSuccessfulTest() {
+    void createCourierSuccessfulTest() {
         Courier courier = Courier.courierWithRandomLogin();
 
         Response response = courierTest.createCourier(courier);
@@ -31,7 +31,7 @@ public class CreateCourierTest extends BaseTest {
         courierId = BaseSteps.getId(loginResponse);
     }
 
-    void CreateCourierBadRequestTest(Object courier) {
+    void createCourierBadRequestTest(Object courier) {
         Response response = courierTest.createCourier(courier);
         BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
         BaseSteps.verifyResponse(response, "message","Недостаточно данных для создания учетной записи");
@@ -40,25 +40,25 @@ public class CreateCourierTest extends BaseTest {
     @Test
     @DisplayName("Creating an account without a login")
     @Description("400: Creating an account without a login")
-    void CreateCourierBadRequestWithoutLoginTest() {
+    void createCourierBadRequestWithoutLoginTest() {
         Courier courier = Courier.courierWithoutLogin();
 
-        CreateCourierBadRequestTest(courier);
+        createCourierBadRequestTest(courier);
     }
 
     @Test
     @DisplayName("Creating an account without a password")
     @Description("400: Creating an account without a password")
-    void CreateCourierBadRequestWithoutPasswordTest() {
+    void createCourierBadRequestWithoutPasswordTest() {
         Courier courier = Courier.courierWithoutPassword();
 
-        CreateCourierBadRequestTest(courier);
+        createCourierBadRequestTest(courier);
     }
 
     @Test
     @DisplayName("Creating an account with a duplicate login")
     @Description("409: Creating an account with a duplicate login")
-    void CreateCourierConflictWithDuplicateLoginTest() {
+    void createCourierConflictWithDuplicateLoginTest() {
         Courier courier = Courier.courierWithRandomLogin();
 
         courierTest.createCourier(courier);

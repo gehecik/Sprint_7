@@ -26,7 +26,7 @@ public class CreateOrderTest extends BaseTest {
     @MethodSource("colorData")
     @DisplayName("Successful order creation")
     @Description("201: Successful order creation")
-    void CreateOrderSuccessfulTest(String[] color) {
+    void createOrderSuccessfulTest(String[] color) {
         Order order = Order.getOrder(color);
 
         Response response = orderTest.createOrder(order);

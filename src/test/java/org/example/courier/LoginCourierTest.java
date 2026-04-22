@@ -29,12 +29,12 @@ public class LoginCourierTest extends BaseTest {
     @Test
     @DisplayName("Successful login to an account")
     @Description("200: Successful login to an account")
-    public void CheckLoginCourierSuccessfulTest() {
+    public void checkLoginCourierSuccessfulTest() {
         Response response = courierTest.loginCourier(courier);
         BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_OK);
     }
 
-    public void CheckLoginCourierBadRequestTest(Object courier) {
+    public void checkLoginCourierBadRequestTest(Object courier) {
         Response response = courierTest.loginCourierWithLog(courier);//.loginCourier(courier);
         BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
         BaseSteps.verifyResponse(response, "message","Недостаточно данных для входа");
@@ -43,22 +43,22 @@ public class LoginCourierTest extends BaseTest {
     @Test
     @DisplayName("Logging an account without login")
     @Description("400: Logging an account without login")
-    public void CheckLoginCourierBadRequestWithoutLoginTest() {
+    public void checkLoginCourierBadRequestWithoutLoginTest() {
         Courier courierWithoutLogin = Courier.currentCourierWithoutLogin(courier);
 
-        CheckLoginCourierBadRequestTest(courierWithoutLogin);
+        checkLoginCourierBadRequestTest(courierWithoutLogin);
     }
 
     @Test
     @DisplayName("Logging an account without password")
     @Description("400: Logging an account without password")
-    public void CheckLoginCourierBadRequestWithoutPasswordTest() {
+    public void checkLoginCourierBadRequestWithoutPasswordTest() {
         Courier courierWithoutPassword = Courier.currentCourierWithoutPassword(courier);
 
-        CheckLoginCourierBadRequestTest(courierWithoutPassword);
+        checkLoginCourierBadRequestTest(courierWithoutPassword);
     }
 
-    public void CheckLoginNotFound(Object courier) {
+    public void checkLoginNotFound(Object courier) {
         Response response = courierTest.loginCourier(courier);
         BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_NOT_FOUND);
         BaseSteps.verifyResponse(response, "message","Учетная запись не найдена");
@@ -67,28 +67,28 @@ public class LoginCourierTest extends BaseTest {
     @Test
     @DisplayName("Logging an account with non-existent login/password pair")
     @Description("404: Logging an account with non-existent login/password pair")
-    public void CheckLoginNotFoundWithNonExistLoginPasswordPair() {
+    public void checkLoginNotFoundWithNonExistLoginPasswordPair() {
         Courier courier = Courier.courierWithRandomLogin();
 
-        CheckLoginNotFound(courier);
+        checkLoginNotFound(courier);
     }
 
     @Test
     @DisplayName("Logging an account with wrong login")
     @Description("404: Logging an account with wrong login")
-    public void CheckLoginNotFoundWithWrongLogin() {
+    public void checkLoginNotFoundWithWrongLogin() {
         Courier courierWrongLogin = Courier.courierWrongLogin(courier);
 
-        CheckLoginNotFound(courierWrongLogin);
+        checkLoginNotFound(courierWrongLogin);
     }
 
     @Test
     @DisplayName("Logging an account with wrong password")
     @Description("404: Logging an account with wrong password")
-    public void CheckLoginNotFoundWithWrongPassword() {
+    public void checkLoginNotFoundWithWrongPassword() {
         Courier courierWrongPassword = Courier.courierWrongPassword(courier);
 
-        CheckLoginNotFound(courierWrongPassword);
+        checkLoginNotFound(courierWrongPassword);
     }
 
     @AfterEach
