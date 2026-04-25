@@ -49,5 +49,4 @@ public class DeleteCourierTest extends BaseTest {
         BaseSteps.checkStatusCode(response, HttpURLConnection.HTTP_BAD_REQUEST);
         BaseSteps.verifyResponse(response, "message","Недостаточно данных для удаления курьера");
     }
-
 }

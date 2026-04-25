@@ -97,5 +97,4 @@ public class LoginCourierTest extends BaseTest {
             courierTest.deleteById(courierId);
         }
     }
-
 }

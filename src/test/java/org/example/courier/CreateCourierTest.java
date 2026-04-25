@@ -76,5 +76,4 @@ public class CreateCourierTest extends BaseTest {
             courierTest.deleteById(courierId);
         }
     }
-
 }
